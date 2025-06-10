@@ -3,6 +3,7 @@ import sys
 from playwright.sync_api import BrowserContext, Page # Không cần sync_playwright ở đây nữa
 import pyperclip
 
+
 # --- CẤU HÌNH ĐĂNG NHẬP (THAY ĐỔI THÔNG TIN NÀY) ---
 # LƯU Ý: Nếu đây là tài khoản thật, hãy cân nhắc sử dụng biến môi trường hoặc file cấu hình riêng
 # để bảo mật thông tin đăng nhập, thay vì hardcode trực tiếp vào code.
@@ -88,3 +89,53 @@ def login_and_generate_runway_video(video_prompt: str, browser_context: BrowserC
         raise Exception(f"❌ Prompt không khớp: '{current_text}'")
     
     print("✅ Prompt đã được dán thành công.")
+
+    IMAGE_PATH = "E:\\Laravel\\CarVan\\Carvan\\public\\images\\car_models\\1747133181.jpg"  
+    try:
+        print("📷 Đang tìm input file để upload ảnh...")
+
+        # Runway thường dùng input[type="file"] ẩn trong DOM
+        upload_input = page.locator('input[type="file"]')
+
+        upload_input.set_input_files(IMAGE_PATH)  # 👈 Upload ảnh
+        page.wait_for_timeout(3000)  # Chờ ảnh được preview
+
+        print("✅ Ảnh đã được upload thành công.")
+    except Exception as e:
+        print(f"❌ Lỗi khi upload ảnh: {e}")
+        page.screenshot(path="upload_error.png")
+        raise
+
+    
+    try:
+        print("🎬 Đang tìm và click nút 'Generate'...")
+
+        # Xác định nút theo class (có thể cần điều chỉnh nếu thay đổi sau này)
+        generate_button = page.locator('button.primaryBlue-oz2I8B')
+
+        # Đợi nút hiển thị
+        generate_button.wait_for(state="visible", timeout=10000)
+
+        # Đợi cho đến khi data-soft-disabled="false"
+        page.wait_for_function(
+            """() => {
+                const btn = document.querySelector('button.primaryBlue-oz2I8B');
+                return btn && btn.getAttribute('data-soft-disabled') === "false";
+            }""",
+            timeout=20000
+        )
+
+        # Kiểm tra và click
+        if not generate_button.is_enabled():
+            raise Exception("❌ Nút 'Generate' đã sẵn sàng nhưng bị disabled!")
+
+        generate_button.scroll_into_view_if_needed()
+        generate_button.click()
+
+        print("✅ Đã click nút 'Generate'. Đợi xử lý...")
+
+    except Exception as e:
+        print(f"❌ Lỗi khi click nút 'Generate': {e}")
+        page.screenshot(path="generate_click_error.png")
+        raise
+
