@@ -7,8 +7,11 @@ import pyperclip
 # --- CẤU HÌNH ĐĂNG NHẬP (THAY ĐỔI THÔNG TIN NÀY) ---
 # LƯU Ý: Nếu đây là tài khoản thật, hãy cân nhắc sử dụng biến môi trường hoặc file cấu hình riêng
 # để bảo mật thông tin đăng nhập, thay vì hardcode trực tiếp vào code.
-YOUR_RUNWAY_EMAIL = "TanTai911" 
-YOUR_RUNWAY_PASSWORD = "Lmhtkaiserx9110" 
+# Account1 = TanTai911
+# pass1 = Lmhtkaiserx9110
+
+YOUR_RUNWAY_EMAIL = "Issac911" 
+YOUR_RUNWAY_PASSWORD = "lmhtkaiserx9110" 
 
 # Đảm bảo USER_DATA_DIR này giống hệt trong main.py
 USER_DATA_DIR = "playwright_user_data_shared" # Thư mục dùng chung cho cả main.py và main2.py
