@@ -9,8 +9,12 @@ import pyperclip
 # để bảo mật thông tin đăng nhập, thay vì hardcode trực tiếp vào code.
 # Account1 = TanTai911
 # pass1 = Lmhtkaiserx9110
+# Account2 = Issac911
+# pass2 = lmhtkaiserx9110
+# Account3 = Luffy911
+# pass3 = lmhtkaiserx9110
 
-YOUR_RUNWAY_EMAIL = "Issac911" 
+YOUR_RUNWAY_EMAIL = "Zoro9110" 
 YOUR_RUNWAY_PASSWORD = "lmhtkaiserx9110" 
 
 # Đảm bảo USER_DATA_DIR này giống hệt trong main.py
@@ -141,4 +145,33 @@ def login_and_generate_runway_video(video_prompt: str, browser_context: BrowserC
         print(f"❌ Lỗi khi click nút 'Generate': {e}")
         page.screenshot(path="generate_click_error.png")
         raise
+
+    print("⏳ Đợi video được render (theo poster preview)...")
+    page.wait_for_selector('video[poster*="task_artifact_previews"] source[src*=".mp4"]', timeout=180000, state="attached")
+    video_source = page.locator('video[poster*="task_artifact_previews"] source[src*=".mp4"]')
+
+
+    video_url = video_source.get_attribute("src")
+    print(f"🎉 Video đã render đúng: {video_url}")
+
+    # Tải về
+    import requests
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(video_url, headers=headers)
+
+    # Đường dẫn thư mục chứa video
+    video_dir = "E:\\Ai Automation\\my-playwright-bot\\VideosSave"
+    os.makedirs(video_dir, exist_ok=True)  # ✅ Tạo nếu chưa có
+
+    # ✅ Đổi tên file cho dễ nhận biết (ví dụ theo prompt hoặc timestamp)
+    import time
+    timestamp = int(time.time())
+    video_filename = f"video_{timestamp}.mp4"
+
+    video_path = os.path.join(video_dir, video_filename)
+
+    with open(video_path, "wb") as f:
+        f.write(response.content)
+
+    print(f"✅ Đã lưu video tại: {video_path}")
 
