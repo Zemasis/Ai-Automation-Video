@@ -99,7 +99,7 @@ if __name__ == "__main__":
     # Đảm bảo context được khởi tạo trước khi gọi bất kỳ hàm nào khác
     main_browser_context = get_playwright_context() # Khởi tạo hoặc lấy context dùng chung
 
-    gemini_query = "Write prompt about one fashion Mercedes car go to city (just text, no code, no markdown, no comments)"
+    gemini_query = "Write prompt about one fashion Mercedes car go to forest not city (just text, no code, no markdown, no comments)"
     generated_video_prompt = get_prompt_from_gemini(gemini_query)
 
     if generated_video_prompt:
