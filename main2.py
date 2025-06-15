@@ -97,7 +97,7 @@ def login_and_generate_runway_video(video_prompt: str, browser_context: BrowserC
     
     print("✅ Prompt đã được dán thành công.")
 
-    IMAGE_PATH = "E:\\Laravel\\CarVan\\Carvan\\public\\images\\car_models\\1747133181.jpg"  
+    IMAGE_PATH = "E:\\Laravel\\CarVan\\Carvan\\public\\images\\RangeofCarOverView.jpg"  
     try:
         print("📷 Đang tìm input file để upload ảnh...")
 
