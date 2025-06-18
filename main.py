@@ -1,5 +1,7 @@
 import main2
 import shlex
+import os
+import shutil
 from playwright.sync_api import sync_playwright, BrowserContext, Page # Import BrowserContext và Page
 
 # --- CẤU HÌNH CHUNG ---
@@ -16,21 +18,25 @@ _playwright_instance = None
 _browser_context = None
 
 def get_playwright_context():
-    """
-    Trả về hoặc khởi tạo đối tượng Playwright và BrowserContext dùng chung.
-    """
     global _playwright_instance, _browser_context
     if _playwright_instance is None:
         _playwright_instance = sync_playwright().start()
-        print("Đã khởi tạo Playwright instance.")
     
     if _browser_context is None:
+        # Clear old context if exists
+        if os.path.exists(USER_DATA_DIR):
+            shutil.rmtree(USER_DATA_DIR)
+            print(f"Cleared old user data at: {USER_DATA_DIR}")
+            
         _browser_context = _playwright_instance.chromium.launch_persistent_context(
             user_data_dir=USER_DATA_DIR,
-            headless=False # Rất quan trọng để quan sát
+            headless=False,
+            # Add these arguments for better stealth
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--start-maximized"
+            ]
         )
-        print(f"Đã khởi tạo BrowserContext tại thư mục: {USER_DATA_DIR}")
-        
     return _browser_context
 
 def get_prompt_from_gemini(query_prompt: str) -> str:
@@ -45,9 +51,10 @@ def get_prompt_from_gemini(query_prompt: str) -> str:
     browser_context = get_playwright_context()
     page = browser_context.new_page() # Mở một tab mới cho Gemini
 
+
     try:
         print("Đang điều hướng đến Gemini...")
-        page.goto("https://gemini.google.com/")
+        page.goto("https://gemini.google.com/app")
 
         prompt_input_locator = page.get_by_role("textbox", name="Enter a prompt here")
 
@@ -99,7 +106,7 @@ if __name__ == "__main__":
     # Đảm bảo context được khởi tạo trước khi gọi bất kỳ hàm nào khác
     main_browser_context = get_playwright_context() # Khởi tạo hoặc lấy context dùng chung
 
-    gemini_query = "Create prompt about Cinematic transition from a parking lot to a neon-lit city at night (just text, no code, no markdown, no comments)"
+    gemini_query = "Create prompt about a super car go to the garage to repair (just text, no code, no markdown, no comments)"
     generated_video_prompt = get_prompt_from_gemini(gemini_query)
 
     if generated_video_prompt:
